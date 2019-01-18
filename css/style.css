@@ -1,0 +1,245 @@
+*{
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	
+}
+html, body {
+   margin:0; 
+   padding: 0;
+}
+body {
+		width: 100%
+		margin:0 auto;
+}
+
+
+.mainView {
+	
+	height: 100%;
+	width: 100%;
+	margin: 0 auto;
+
+}
+.headerView img {
+		width: 300px;
+		padding: 20px;
+}
+	.contentView{
+		position: relative;
+		margin: 0px auto;
+		padding:1px 0;
+	}
+	
+	.onequart {
+		margin-top: 30px;
+		float: left;
+		width: 35%;
+		padding: 30px;
+		text-align: center;
+	}
+	.threequart {
+
+		float: left;
+		width: 65%;
+		padding: 30px 0;
+		text-align: center;
+	}
+	.onequart p, .threequart p {
+		font-size: 20px;
+		font-weight: bold;
+		text-align: center;
+		margin-bottom: 10px;
+	}
+	.threequart, form input {
+		height: 18px;
+		padding: 5px;
+		border-color: 1px solid black;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 0 auto;
+		margin-bottom: 124px;
+	}
+	button {
+		width: 80px;
+		margin: 0 auto;
+		margin-top: 30px;
+		font-size: 20px;
+		padding: 5px;
+	}
+
+.clear{
+	content: "";
+	display: block;
+	clear: both;
+}
+
+
+.threequart, form {
+	padding-bottom: 124px;	
+}
+
+
+
+table tr th, table tr td {
+	border: 1px solid darkblue;
+	height: 15px;
+}
+
+table tr th {
+	
+	
+}
+
+table tr td {
+
+}
+
+
+.message {
+width: 250px;
+margin:0 auto;
+padding: 0 5 5 30px;
+color: #ff5b5b;
+background-color: cyan;
+border: none;
+border-radius: 20%;
+}
+
+.row {
+	
+}
+
+.tri{
+	background-color: cyan;
+}
+.footerView {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	margin-top: 20px;
+	padding:1px 0;
+	background-color: #747474;
+	height: 111px;
+}
+
+
+.footerView ul {
+	display: inline;
+	padding: 23px;
+}
+
+.footerView ul li {
+	
+	list-style-type: none;
+	display: inline;
+	
+}
+
+.footerView ul li img {
+	margin-top: 50px;
+	width: 50px;
+	margin: 5px;
+	border-radius: 20%;
+}
+
+@media only screen and (max-width: 959px){
+
+	.headerView img {
+		width: 200px;
+	}
+	.contentView{
+		max-width: 100%;
+		margin-bottom: 150px;
+	}
+	.onequart {
+	width: 100%;
+	text-align: center;
+	display: block;
+	}
+
+	.threequart {
+	width: 100%;
+	text-align: center;
+	display: block;
+	}
+	.threequart, form {
+	padding-bottom: 111px;	
+	}
+	.message {
+	margin-bottom: 100px;
+	}
+	.onequart p, .threequart p {
+		font-size: 20px;
+		margin-bottom: 10px;
+	}
+	.clear {
+		clear: both;
+	}
+	table {
+		width: 100%;
+		margin-bottom: 14px;
+	}
+	.footerView {
+		position: fixed;
+		height: 70px;
+		bottom: 0;
+	}
+	.footerView ul li img {
+	width: 40px;
+	padding: 5px;
+	margin-top: 10px;
+	}
+}
+@media only screen and (max-width: 500px){
+	.mainView {
+	width: 100%;
+	min-height: calc(100vh - 111px);
+	}
+	.headerView img {
+	width: 100%;
+	}
+	
+	.onequart {
+	width: 100%;
+	text-align: center;
+	padding-bottom: 30px;
+	display: block;
+	}
+
+
+	.threequart {
+
+	width: 100%;
+	text-align: center;
+	padding-bottom: 30px;
+	display: block !important;
+	margin-bottom: 100px;
+	}
+	.message {
+	margin-bottom: 100px;
+	}
+	.onequart p, .threequart p {
+	font-size: 18px;
+	
+	}
+	.threequart, form input {
+	width: 100%;
+	border-color: 1px solid black;
+	}
+
+	table {
+		width: 100%;
+		margin-bottom: 14px;
+	}
+	
+
+	.footerView {
+	
+	position: fixed;
+	bottom: 0;
+	margin-top: 40px;
+	}
+}
