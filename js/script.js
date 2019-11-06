@@ -44,7 +44,7 @@ function Validate(){
 		ville.focus();
 		return false;
 	}/*else{
-		$success.textContent "Enregistré";
+		success.textContent "Enregistré";
 		success.style.color = "blue";
 		return true;
 	}*/
@@ -79,32 +79,32 @@ function villeVerify() {
 		return true;
 	}
 }
+//trier le tableau
+function sortSelect(order){
+	Liste= new Array();
+	Obj= document.getElementById("colonne");
 
-function load_data(is_category)
-{
-	var dataTable= $('#table_tri').DataTable({
-		"processing": true,
-		"serverside": true,
-		"order": [],
-		"ajax": {
-			url:"index.php",
-			type: "POST",
-			data:{is_category:is_category}
-		},
-		"columnDefs": [
-		{
-			"targets": [4],
-			"orderable": false,
-		},
-		],
-	});
+	for (i = 0; i<Obj.options.length ; i++) {
+		Liste[i]=new Array;
+		switch(order){
+			case 'textnum'   : Liste[i][0]=Obj.options[i].text.match(/\d+/)[0]
+			break;
+			case 'textalpha' : Liste[i][0]=Obj.options[i].text.match(/\D+/)[0]
+			break;
+			case 'valnum'    : Liste[i][0]=Obj.options[i].value.match(/\d+/)[0]
+			break;
+			case 'valalpha'  : Liste[i][0]=Obj.options[i].value.match(/\D+/)[0]
+		}
+	}
 }
+
+
 
 // Fonction ajax d'ajout de membre
 
 	$('#addMembre').submit(function(){
 		var data = {'nom' :$('#nom').val(), 'prenom' :$('#prenom').val(), 'age' :$('#age').val(), 'ville' :$('#ville').val()};
-		
+		console.log($('#addMembre'));
 		$.ajax({
 			type: "POST",
 			data: data,
@@ -123,6 +123,7 @@ function load_data(is_category)
 				}
 				html += "</table>";
 				$('#membre_table').append(html);
+				$('#addMembre')[0].reset();
 			}
 		});
 	});
