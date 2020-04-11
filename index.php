@@ -1,13 +1,62 @@
 <?php
 // Connexion à la BDD
-$link = new mysqli("localhost", "root", "", "sellbase");
+try{
+    $pdo = new PDO('mysql:host=localhost; dbname=sellbase', 'root', '',
+    [
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+    ]);
+   } catch(PDOException $e) {
+        die('Database connexion failed '. $e->getMessage());
+   }
 
-// Vérification de la connexion 
+$query = 'SELECT lastname, firstname, age, city FROM sell_user_member ORDER BY id ASC';
+
+//$membres = [];
+
+if ($results= $pdo->query($query)) {
+    //on récupère les membres
+    $membres = $results->fetchAll();
+    $membreTri = $membres;
+}
+
+//insertion d'un nouveau membre
+if ($pdo){
+
+            if(!empty($_POST['nom']) && !empty($_POST['prenom']) && is_numeric($_POST['age']) && !empty($_POST['ville']))
+                    {
+
+
+                    $query= $pdo->prepare("INSERT INTO sell_user_member(lastname,firstname,age,city) VALUES (:lastname, :firstname, :age, :city)");
+                    $query->execute(['lastname' => $_POST['nom'], 'firstname' => $_POST['prenom'], 'age' => $_POST['age'], 'city' => $_POST['ville']]);
+
+                   }     
+                   //on quitte le script 
+                   //exit();
+                }
+
+// trier les tableaux
+$colonne = '';
+$tri = '';
+
+if (!empty($_POST['tri']) && !empty($_POST['colonne'])) {
+    $tri = $_POST['tri'];
+    $colonne = $_POST['colonne'];
+    $query = "SELECT lastname, firstname, age, city FROM sell_user_member ORDER BY $colonne $tri";
+    $stmt = $pdo->query($query);
+    if ($stmt) {
+        $membreTri = $stmt->fetchAll();
+    }
+}
+/*$link = new mysqli("localhost", "root", "", "sellbase");
+
+ Vérification de la connexion 
 if (mysqli_connect_errno()) {
     printf("Échec de la connexion : %s\n", $mysqli->connect_error);
     exit();
 }
-mysqli_set_charset($link,"utf8");
+mysqli_set_charset($link,"utf8");*/
 ?>
 
 <!doctype html>
@@ -16,8 +65,6 @@ mysqli_set_charset($link,"utf8");
         <meta charset="utf-8">
         <title>Test</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css"/>
         <link rel="stylesheet" href="css/style.css">
        
     </head>
@@ -38,32 +85,24 @@ mysqli_set_charset($link,"utf8");
                                 <th>VILLE</th>
                             </tr>
                         </thead>
-                        <tbody><tr>
+                        <tbody>
                             <?php
-                            //La connexion pdo pose problème au niveau du "fetch_assoc" alors je me suis rabatu sur mysqli
-                            $query = "SELECT lastname, firstname, age, city FROM sell_user_member ORDER by id ASC";
 
-                                if($result= mysqli_query($link, $query)){
-                            
-                            //Parcours de la première boucle
-                             while ($mb= mysqli_fetch_assoc($result)) {
+                                foreach ($membres as $membre):
+                                ?>
+                            <tr>       
+                                <td><?= $membre->lastname; ?></td>
+                                <td><?= $membre->firstname; ?></td>
+                                <td><?= $membre->age; ?></td>    
+                                <td><?= $membre->city; ?></td>
                                 
-                                ?>       
-                                <td><?php echo $mb['lastname'] ; ?></td>
-                                <td><?php echo $mb['firstname'] ; ?></td>
-                                <td><?php echo $mb['age'] ; ?></td>    
-                                <td><?php echo $mb['city'] ; ?></td>
-
                             </tr>
-                        
+                            
                             <?php
-                            }
-
-                            echo json_encode($mb);
-                            /* Libération des résultats */
-                            mysqli_free_result($result);
+                            /* Libération des résultats 
+                            mysqli_free_result($results);*/
                              
-                        } ?>
+                        endforeach; ?>
                         </tbody>
                     </table>
                     
@@ -72,28 +111,21 @@ mysqli_set_charset($link,"utf8");
                 <div class="threequart">
                     <p>Formulaire de tri</p>
                     <form id="formulaire" action="index.php" method="POST">
-                        <select class="tri" name="colonne">
-                            <option value="">nom</option>
-                            <?php
-                            $connect= mysqli_connect("localhost", "root", "", "sellbase");
-                            $column= array("firstname","lastname", "age","city");
-                            $query= "
-                                SELECT * FROM
-                                sell_user_member";
+                        <select class="tri" name="colonne" id="colonne" onchange="this.form.submit()">
 
-
-                            $query.= "WHERE";
-                           
-                            ?>
-                            <option value="nom">nom</option>
-                            <option value="prenom">prenom</option>
-                            <option value="age">age</option>
-                            <option value="ville">ville</option>
+                            <option value="lastname" <?php if($colonne=== "lastname"){echo "selected";} ?>>nom</option>
+                            <option value="firstname" <?php if($colonne=== "firstname"){echo "selected";} ?>>prenom</option>
+                            <option value="age" <?php if($colonne=== "age"){echo "selected";} ?>>age</option>
+                            <option value="city" <?php if($colonne=== "city"){echo "selected";} ?>>ville</option>
                         </select>
-                        <select class="tri" name="tri">
-                            <option value="ASC">Croissant</option>
-                            <option value="DESC">Décroissant</option>
+                        <select class="tri" name="tri" id="tri" onchange="this.form.submit()">
+                            <option value="ASC" <?php if($tri=== "ASC"){echo "selected";} ?>>Croissant</option>
+                            <option value="DESC" <?php if($tri=== "DESC"){echo "selected";} ?>>Décroissant</option>
                         </select>
+                        <?php
+                        
+                        ?>
+                        
                     </form>
                     <table id="table_tri">
                         <thead>
@@ -105,6 +137,15 @@ mysqli_set_charset($link,"utf8");
                             </tr>
                         </thead>
                         <tbody>
+                            
+                        <?php foreach ($membreTri as $membre): ?> 
+                            <tr>      
+                                <td><?= $membre->lastname; ?></td>
+                                <td><?= $membre->firstname; ?></td>
+                                <td><?= $membre->age; ?></td>    
+                                <td><?= $membre->city; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
                         </tbody>
                     </table>
                     <p>Nouveau membre</p>
@@ -116,22 +157,8 @@ mysqli_set_charset($link,"utf8");
                         <button type="submit" name="register" id="envoyer">Valider</button>
                     </form>
                     <?php
-                    if ($link){
-
-                    if(isset($_POST['nom']) && !empty($_POST['nom']) && isset($_POST['prenom']) && !empty($_POST['prenom']) && isset($_POST['age']) && is_numeric($_POST['age']) && isset($_POST['ville']) && !empty($_POST['ville']))
-                    {
-
-                    $nom= $_POST['nom'];
-                    $prenom= $_POST['prenom'];
-                    $age= $_POST['age'];
-                    $ville= $_POST['ville'];
-
-                    $sql="INSERT INTO sell_user_member(lastname,firstname,age,city) VALUES ('$nom','$prenom','$age','$ville')";
-                    $res= mysqli_query($link, $sql);
-
-                        }
-                    }
                     
+                 
                 ?>
                     <div class="message" id="message"></div>
                 </div><!--threequart-->
@@ -145,7 +172,8 @@ mysqli_set_charset($link,"utf8");
                 </ul>
             </div><!--footerview-->
         </div>
+            <script src="js/jquery.3.2.1.min.js"></script>
+            <script src="js/script.js"></script>
     </body>
-    <script src="js/jquery.3.2.1.min.js"></script>
-    <script src="js/script.js"></script>
+
 </html>
